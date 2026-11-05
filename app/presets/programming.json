@@ -1,0 +1,124 @@
+{
+  "name": "Программирование: учётка, Git, СУБД",
+  "description": "Домен, Git-сервер и базы данных — как на чемпионатах по программированию",
+  "columns": [
+    {
+      "key": "ad_login",
+      "label": "AD логин",
+      "secret": false
+    },
+    {
+      "key": "ad_password",
+      "label": "AD пароль",
+      "secret": true
+    },
+    {
+      "key": "db_login",
+      "label": "Логин СУБД/Git",
+      "secret": false
+    },
+    {
+      "key": "db_password",
+      "label": "Пароль СУБД/Git",
+      "secret": true
+    }
+  ],
+  "cards": [
+    {
+      "title": "Учётная запись",
+      "subtitle": "Вход на рабочее место",
+      "icon": "🔑",
+      "badge": "AD",
+      "fields": [
+        {
+          "label": "Логин",
+          "value": "{ad_login}",
+          "accent": true
+        },
+        {
+          "label": "Пароль",
+          "value": "{ad_password}",
+          "accent": true
+        }
+      ]
+    },
+    {
+      "title": "Git-сервер",
+      "subtitle": "Репозиторий исходного кода",
+      "icon": "📦",
+      "badge": "Gogs",
+      "fields": [
+        {
+          "label": "Портал",
+          "value": "http://git.example.lab:3000",
+          "link": true
+        },
+        {
+          "label": "Логин Git",
+          "value": "{db_login}",
+          "accent": true
+        },
+        {
+          "label": "Email",
+          "value": "{db_login}@example.lab"
+        },
+        {
+          "label": "Пароль Git",
+          "value": "{db_password}",
+          "accent": true
+        }
+      ]
+    },
+    {
+      "title": "Microsoft SQL Server",
+      "subtitle": "Реляционная СУБД",
+      "icon": "🗄️",
+      "fields": [
+        {
+          "label": "Имя сервера",
+          "value": "DB.EXAMPLE.LAB\\SQLEXPRESS"
+        },
+        {
+          "label": "Имя базы данных",
+          "value": "{db_login}",
+          "accent": true
+        },
+        {
+          "label": "Логин СУБД",
+          "value": "{db_login}",
+          "accent": true
+        },
+        {
+          "label": "Пароль СУБД",
+          "value": "{db_password}",
+          "accent": true
+        }
+      ]
+    },
+    {
+      "title": "MySQL и PostgreSQL",
+      "subtitle": "Открытые СУБД",
+      "icon": "🌐",
+      "fields": [
+        {
+          "label": "Хост MySQL",
+          "value": "db.example.lab:3306"
+        },
+        {
+          "label": "Хост PostgreSQL",
+          "value": "db.example.lab:5432"
+        },
+        {
+          "label": "Логин / Имя БД",
+          "value": "{db_login}",
+          "accent": true
+        },
+        {
+          "label": "Пароль СУБД",
+          "value": "{db_password}",
+          "accent": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+{% block title %}Мой пароль{% endblock %}
+{% block content %}
+<div class="sec-hdr"><h2>Смена пароля</h2></div>
+<form class="card pad narrow-form" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>Текущий пароль <input type="password" name="old" required autocomplete="current-password"></label>
+  <label>Новый пароль <input type="password" name="new" required autocomplete="new-password"></label>
+  <button class="btn btn-primary">Изменить</button>
+</form>
+{% endblock %}

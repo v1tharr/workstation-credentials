@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block theme %}dark adm{% endblock %}
+{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">{% endblock %}
+{% block body %}
+<div class="shell{{ ' bare' if not me }}">
+  {% if me %}
+  <aside class="side">
+    <div class="side-brand"><span class="logo">▮▮</span><strong>workstation<br>credentials</strong></div>
+    <nav class="side-nav">
+      <a href="{{ url_for('admin.panel') }}" class="{{ 'on' if request.endpoint == 'admin.panel' }}">Коды</a>
+      <a href="{{ url_for('admin.exams') }}" class="{{ 'on' if request.endpoint in ('admin.exams', 'admin.exam_edit') }}">Мероприятия</a>
+      {% if me.role == 'owner' %}<a href="{{ url_for('admin.admins') }}" class="{{ 'on' if request.endpoint == 'admin.admins' }}">Админы</a>{% endif %}
+      <a href="{{ url_for('admin.audit_log') }}" class="{{ 'on' if request.endpoint == 'admin.audit_log' }}">Журнал</a>
+    </nav>
+    <div class="side-user">
+      <a href="{{ url_for('admin.account') }}"><span class="lbl">{{ 'владелец' if me.role == 'owner' else 'админ' }}</span>{{ me.username }}</a>
+      <form method="post" action="{{ url_for('admin.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="btn btn-ghost sm" type="submit">Выйти</button>
+      </form>
+    </div>
+  </aside>
+  {% endif %}
+  <main class="wrap">
+    {% with msgs = get_flashed_messages(with_categories=true) %}
+      {% for cat, msg in msgs %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+    {% endwith %}
+    {% if me and not key_ok %}<div class="flash err">ENCRYPTION_KEY в .env не подходит к данным в базе: пароли рабочих мест не расшифровать, участники увидят ошибку. Верните прежний ключ или удалите старые данные (<code>docker compose down -v</code>).</div>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

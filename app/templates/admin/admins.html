@@ -1,0 +1,53 @@
+{% extends "admin/base.html" %}
+{% block title %}Администраторы{% endblock %}
+{% block content %}
+<div class="sec-hdr"><h2>Администраторы</h2></div>
+<div class="tbl card">
+  <table>
+    <thead><tr><th>Логин</th><th>Роль</th><th>Статус</th><th>Новый пароль</th><th></th><th></th></tr></thead>
+    <tbody>
+    {% for a in admins %}
+    <tr>
+      <td class="mono">{{ a.username }}</td>
+      <td>{{ 'владелец' if a.role == 'owner' else 'админ' }}</td>
+      <td><span class="tag {{ 'open' if a.active else 'closed' }}">{{ 'активен' if a.active else 'отключён' }}</span></td>
+      <td>
+        <form class="inline" method="post" action="{{ url_for('admin.admin_reset_password', admin_id=a.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <input type="password" name="password" placeholder="не менее {{ min_pw }} символов" autocomplete="new-password">
+          <button class="btn btn-ghost sm">Сменить</button>
+        </form>
+      </td>
+      <td>
+        {% if a.id != me.id %}
+        <form method="post" action="{{ url_for('admin.admin_toggle', admin_id=a.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="btn btn-ghost sm">{{ 'Отключить' if a.active else 'Включить' }}</button>
+        </form>
+        {% endif %}
+      </td>
+      <td>
+        {% if a.id != me.id %}
+        <form method="post" action="{{ url_for('admin.admin_delete', admin_id=a.id) }}" data-confirm="Удалить администратора {{ a.username }}? Это нельзя отменить.">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="btn btn-danger sm">Удалить</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="card pad">
+  <h3>Новый администратор</h3>
+  <form class="inline" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input name="username" placeholder="логин" required autocomplete="off">
+    <input type="password" name="password" placeholder="пароль (от {{ min_pw }} символов)" required autocomplete="new-password">
+    <select name="role" data-combo><option value="admin">админ</option><option value="owner">владелец</option></select>
+    <button class="btn btn-primary">Создать</button>
+  </form>
+  <p class="hint">Админ ведёт мероприятия и выдаёт доступы. Владелец дополнительно управляет списком админов.</p>
+</div>
+{% endblock %}

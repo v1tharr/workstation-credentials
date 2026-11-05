@@ -1,0 +1,57 @@
+{% extends "admin/base.html" %}
+{% block title %}Мероприятия{% endblock %}
+{% block content %}
+<div class="sec-hdr"><h2>Мероприятия</h2></div>
+<div class="tbl card">
+  {% if exams %}
+  <table>
+    <thead><tr><th>Название</th><th>Статус</th><th>Мест</th><th>Активных</th><th></th></tr></thead>
+    <tbody>
+    {% for e in exams %}
+    <tr>
+      <td><a href="{{ url_for('admin.exam_edit', exam_id=e.id) }}">{{ e.title }}</a></td>
+      <td><span class="tag {{ e.status }}">{{ 'открыто' if e.status == 'open' else 'закрыто' }}</span></td>
+      <td>{{ e.n_slots }}</td>
+      <td>{{ e.n_active }}</td>
+      <td class="right"><a class="btn btn-ghost sm" href="{{ url_for('admin.exam_edit', exam_id=e.id) }}">Открыть</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<div class="empty">Мероприятий пока нет</div>{% endif %}
+</div>
+
+<div class="card pad">
+  <h3>Новое мероприятие</h3>
+  <form class="inline" method="post" action="{{ url_for('admin.exam_new') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input name="title" placeholder="Название, например «ИБ, группа 21-1»" required size="34">
+    <select name="source" data-combo>
+      <option value="">пустой, с нуля</option>
+      {% if presets %}<optgroup label="Готовые шаблоны">
+        {% for p in presets %}<option value="preset:{{ p.id }}">{{ p.name }}</option>{% endfor %}
+      </optgroup>{% endif %}
+      {% if exams %}<optgroup label="По образцу мероприятия">
+        {% for e in exams %}<option value="exam:{{ e.id }}">{{ e.title }}</option>{% endfor %}
+      </optgroup>{% endif %}
+    </select>
+    <button class="btn btn-primary">Создать</button>
+  </form>
+  <p class="hint">Шаблон и «по образцу» копируют колонки и карточки, но не рабочие места и пароли.</p>
+</div>
+
+<details class="card pad">
+  <summary><strong>Создать из JSON</strong> <span class="hint">— для переноса между инсталляциями</span></summary>
+  <p class="hint">Подойдёт шаблон, скачанный из другого мероприятия (колонки, карточки и при желании <code>slots</code>),
+    либо старый <code>config.json</code> — список записей, колонки возьмутся из ключей.</p>
+  <form method="post" enctype="multipart/form-data" action="{{ url_for('admin.exam_import_json') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Название (если в JSON его нет) <input name="title"></label>
+    <textarea name="json" rows="4" placeholder="Вставьте JSON сюда или выберите файл"></textarea>
+    <div class="row">
+      <label class="file-pick"><input type="file" name="file" accept=".json,application/json"><span class="file-name">Файл не выбран</span></label>
+      <button class="btn btn-primary sm">Создать</button>
+    </div>
+  </form>
+</details>
+{% endblock %}

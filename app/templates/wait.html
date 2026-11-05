@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Ожидание активации{% endblock %}
+{% block bodyattrs %}data-poll="{{ url_for('student.status') }}"{% endblock %}
+{% block body %}
+<div class="center">
+  <div class="card narrow tc">
+    <h1>Ожидание активации</h1>
+    <p class="sub">Назовите этот код техническому эксперту — он привяжет вас к рабочему месту.</p>
+    <div class="code-label">Ваш код</div>
+    <div class="code-box">{{ code }}</div>
+    <div class="status"><span class="dot"></span><span id="status-text">Ожидаем подтверждения…</span></div>
+  </div>
+</div>
+{% endblock %}

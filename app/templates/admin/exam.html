@@ -1,0 +1,123 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ exam.title }}{% endblock %}
+{% block head %}{{ super() }}<script src="{{ url_for('static', filename='editor.js') }}" defer></script>{% endblock %}
+{% block content %}
+<a class="back" href="{{ url_for('admin.exams') }}">← Все мероприятия</a>
+<div class="sec-hdr">
+  <h2>{{ exam.title }} <span class="tag {{ exam.status }}">{{ 'открыто' if exam.status == 'open' else 'закрыто' }}</span></h2>
+  <div class="row">
+    <a class="btn btn-ghost sm" href="{{ url_for('admin.exam_export', exam_id=exam.id) }}" title="Колонки и карточки без паролей">Скачать шаблон</a>
+    <form method="post" action="{{ url_for('admin.exam_revoke_all', exam_id=exam.id) }}" data-confirm="Сбросить все активные сеансы этого мероприятия?">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button class="btn btn-ghost sm">Сбросить сеансы</button>
+    </form>
+    <form method="post" action="{{ url_for('admin.exam_status', exam_id=exam.id) }}"
+          {% if exam.status == 'open' %}data-confirm="Закрыть мероприятие? Все активные участники потеряют доступ."{% endif %}>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button class="btn btn-ghost sm">{{ 'Закрыть мероприятие' if exam.status == 'open' else 'Открыть снова' }}</button>
+    </form>
+    <form method="post" action="{{ url_for('admin.exam_delete', exam_id=exam.id) }}" data-confirm="Удалить мероприятие вместе со всеми учётными данными? Это необратимо.">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button class="btn btn-danger sm">Удалить</button>
+    </form>
+  </div>
+</div>
+
+<div class="ptabs">
+  <button type="button" class="ptab" data-ptab="places">Рабочие места <span class="badge">{{ slots|length }}</span></button>
+  <button type="button" class="ptab" data-ptab="layout">Данные и страница участника</button>
+</div>
+<div id="ptab-root" data-default="{{ default_tab }}">
+<section data-ppane="places">
+<div class="sec-hdr first">
+  <h3>Рабочие места <span class="badge">{{ slots|length }}</span></h3>
+  <a class="btn btn-primary sm" href="{{ url_for('admin.slot_edit', exam_id=exam.id) }}">+ Добавить</a>
+</div>
+<div class="tbl card">
+  {% if slots %}
+  <input class="filter" placeholder="Поиск…" data-filter="#slots">
+  <table id="slots">
+    <thead><tr>
+      {% for c in columns %}<th>{{ c.label }}</th>{% endfor %}
+      <th></th>
+    </tr></thead>
+    <tbody>
+    {% for s in slots %}
+    <tr>
+      {% for c in columns %}
+      <td class="mono">{% if c.secret %}••••••••{% else %}{{ s.data.get(c.key, '') }}{% endif %}</td>
+      {% endfor %}
+      <td class="right nowrap">
+        {% if s.busy %}<span class="tag open">занято</span>{% endif %}
+        <a class="btn btn-ghost sm" href="{{ url_for('admin.slot_preview', exam_id=exam.id, slot_id=s.id) }}">Вид участника</a>
+        <a class="btn btn-ghost sm" href="{{ url_for('admin.slot_edit', exam_id=exam.id, slot_id=s.id) }}">Изменить</a>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<div class="empty">Рабочих мест нет — добавьте вручную или загрузите CSV ниже</div>{% endif %}
+</div>
+
+<div class="card pad">
+  <h3>Загрузка из CSV</h3>
+  <p class="hint">Первая строка — названия колонок: <code>{{ columns|map(attribute='key')|join(', ') }}</code> (<a href="{{ url_for('admin.slots_csv_header', exam_id=exam.id) }}">скачать заготовку</a>).
+    Разделитель — запятая, «;» или табуляция. Строки с тем же значением первой колонки обновляются, остальные добавляются.</p>
+  <form method="post" enctype="multipart/form-data" action="{{ url_for('admin.slots_import', exam_id=exam.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <textarea name="csv" rows="5" placeholder="{{ columns|map(attribute='key')|join(';') }}"></textarea>
+    <div class="row">
+      <label class="file-pick"><input type="file" name="file" accept=".csv,.txt"><span class="file-name">Файл не выбран</span></label>
+      <button class="btn btn-primary sm">Импортировать</button>
+    </div>
+  </form>
+</div>
+
+</section>
+<section data-ppane="layout" hidden>
+<form class="card pad" method="post" id="exam-form">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <label>Название мероприятия <input name="title" value="{{ form.title }}" required></label>
+
+  <div class="tabs" role="tablist">
+    <button type="button" class="tab active" data-tab="visual">Редактор</button>
+    <button type="button" class="tab" data-tab="json">JSON</button>
+  </div>
+  <div id="editor-msg" class="flash err" hidden></div>
+
+  <div data-pane="visual">
+    <div class="ed-layout">
+      <div class="ed-main">
+        <h4 class="ed-h"><span class="step">1</span> Какие данные у каждого рабочего места</h4>
+        <p class="hint">Например «Логин» и «Пароль». Эти значения вы потом вводите для каждого места (руками или из CSV).
+          Первая строка в списке служит названием места.</p>
+        <div id="columns-ed"></div>
+        <label class="ed-check ed-keys-toggle"><input type="checkbox" id="show-keys"> показать технические имена колонок (нужны для CSV и JSON)</label>
+
+        <h4 class="ed-h"><span class="step">2</span> Что увидит участник</h4>
+        <p class="hint">Карточки с полями. В каждом поле выберите, откуда брать значение: <b>данные рабочего места</b>
+          (у каждого места своё) или <b>свой текст</b> (одинаково у всех, например адрес сервера).</p>
+        <div id="cards-ed"></div>
+      </div>
+      <aside class="ed-preview">
+        <div class="lbl">Так увидит участник</div>
+        <div id="preview" class="light preview"></div>
+        <p class="hint">В угловых скобках показано, где подставятся данные конкретного места.</p>
+      </aside>
+    </div>
+  </div>
+
+  <div data-pane="json" hidden>
+    <label>Колонки (по строке: <code>ключ; Подпись; secret</code>)
+      <textarea name="columns" id="columns-src" rows="6" spellcheck="false">{{ form.columns }}</textarea>
+    </label>
+    <label>Карточки (JSON)
+      <textarea name="cards" id="cards-src" rows="18" spellcheck="false">{{ form.cards }}</textarea>
+    </label>
+  </div>
+
+  <button class="btn btn-primary block">Сохранить</button>
+</form>
+</section>
+</div>
+{% endblock %}

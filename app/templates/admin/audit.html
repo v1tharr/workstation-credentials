@@ -1,0 +1,16 @@
+{% extends "admin/base.html" %}
+{% block title %}Журнал{% endblock %}
+{% block content %}
+<div class="sec-hdr"><h2>Журнал действий</h2></div>
+<div class="tbl card">
+  <input class="filter" placeholder="Поиск…" data-filter="#audit">
+  <table id="audit">
+    <thead><tr><th>Время</th><th>Кто</th><th>Действие</th><th>Детали</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+    <tr><td class="ts">{{ r.ts|ts }}</td><td>{{ r.admin }}</td><td class="mono">{{ r.action }}</td><td>{{ r.details }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

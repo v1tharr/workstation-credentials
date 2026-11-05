@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Ошибка{% endblock %}
+{% block body %}
+<div class="center">
+  <div class="card narrow">
+    <h1>{% if e %}{{ e.code }} {{ e.name }}{% else %}{{ title or 'Сеанс завершён' }}{% endif %}</h1>
+    <p class="sub">{{ message or (e.description if e else '') }}</p>
+    <a class="btn btn-primary" href="{{ url_for('student.index') }}">На главную</a>
+  </div>
+</div>
+{% endblock %}

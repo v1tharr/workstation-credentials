@@ -1,0 +1,40 @@
+{% macro copy_btn(text) %}
+<button class="copy-btn" type="button" data-copy="{{ text }}" title="Скопировать" aria-label="Скопировать">
+  <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+</button>
+{% endmacro %}
+
+{% macro eye_btn() %}
+<button class="eye-btn" type="button" data-reveal title="Показать / скрыть" aria-label="Показать или скрыть значение">
+  <svg class="i-eye" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M12 5c-5 0-9.3 3.1-11 7 1.7 3.9 6 7 11 7s9.3-3.1 11-7c-1.7-3.9-6-7-11-7zm0 11.5a4.5 4.5 0 110-9 4.5 4.5 0 010 9zm0-7a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"/></svg>
+  <svg class="i-eye-off" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M2.8 2.8L1.4 4.2l3.2 3.2C2.9 8.7 1.6 10.2 1 12c1.7 3.9 6 7 11 7 1.8 0 3.5-.4 5-1.1l3.4 3.4 1.4-1.4L2.8 2.8zM12 16.5a4.5 4.5 0 01-4.1-6.3l1.6 1.6a2.5 2.5 0 003 3l1.6 1.6c-.6.1-1.4.1-2.1.1zM12 5c-1.1 0-2.2.2-3.2.5l2 2c.4-.1.8-.1 1.2-.1a4.5 4.5 0 014.5 4.5c0 .4 0 .8-.1 1.2l3 3c1.5-1.2 2.7-2.7 3.6-4.7-1.7-3.9-6-7-11-7z"/></svg>
+</button>
+{% endmacro %}
+
+<div class="grid">
+{% for card in cards %}
+  <section class="card">
+    <div class="card-hdr">
+      {% if card.icon %}<div class="card-icon">{{ card.icon }}</div>{% endif %}
+      <div>
+        <div class="card-title">{{ card.title }}{% if card.badge %}<span class="card-badge">{{ card.badge }}</span>{% endif %}</div>
+        {% if card.subtitle %}<div class="card-sub">{{ card.subtitle }}</div>{% endif %}
+      </div>
+    </div>
+    <div class="card-body">
+      {% for f in card.fields %}
+      <div class="field">
+        <div class="field-lbl">{{ f.label }}</div>
+        <div class="field-row">
+          <div class="field-val{{ ' accent' if f.accent }}">
+            {% if f.masked %}••••••••{% elif f.link %}<a href="{{ f.value }}" target="_blank" rel="noopener noreferrer">{{ f.value }}</a>{% else %}{{ f.value }}{% endif %}
+          </div>
+          {% if f.masked %}{{ eye_btn() }}{% endif %}
+          {{ copy_btn(f.value) }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endfor %}
+</div>

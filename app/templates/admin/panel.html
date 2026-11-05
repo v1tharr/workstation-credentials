@@ -1,0 +1,95 @@
+{% extends "admin/base.html" %}
+{% block title %}Коды{% endblock %}
+{% block content %}
+<details class="help card" style="padding:10px 14px">
+  <summary>Как это работает</summary>
+  <ol>
+    <li>Участник открывает сайт и видит 6-значный код.</li>
+    <li>Он называет код вам — найдите его в списке «Ожидают активации».</li>
+    <li>Выберите рабочее место и нажмите «Активировать» — у участника откроются его данные.</li>
+    <li>После мероприятия закройте его в разделе «Мероприятия» — доступы сразу отзовутся.</li>
+  </ol>
+</details>
+<div class="sec-hdr">
+  <h2>Ожидают активации <span class="badge">{{ pending|length }}</span></h2>
+  <div class="row">
+  <a class="btn btn-ghost sm" href="{{ url_for('admin.panel') }}">Обновить</a>
+  {% if pending %}
+  <form method="post" action="{{ url_for('admin.pending_delete') }}" data-confirm="Удалить ВСЕ ожидающие коды?">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="all" value="1">
+    <button class="btn btn-danger sm">Очистить</button>
+  </form>
+  {% endif %}
+  </div>
+</div>
+<div class="tbl card">
+  {% if pending %}
+  <input class="filter" placeholder="Поиск по коду или IP…" data-filter="#pending">
+  <table id="pending">
+    <thead><tr><th>Код</th><th>IP</th><th>Создан</th><th>Привязать к рабочему месту</th><th></th></tr></thead>
+    <tbody>
+    {% for r in pending %}
+    <tr>
+      <td class="code-cell">{{ r.code }}</td>
+      <td class="mono">{{ r.ip }}</td>
+      <td class="ts">{{ r.created_at|ts }}</td>
+      <td>
+        <form class="inline" method="post" action="{{ url_for('admin.activate') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <input type="hidden" name="code" value="{{ r.code }}">
+          <select name="slot_id" data-combo data-placeholder="Выбрать рабочее место…">
+            {% for title, slots in groups.items() %}
+            <optgroup label="{{ title }}">
+              {% for s in slots %}<option value="{{ s.id }}">{{ s.label }}</option>{% endfor %}
+            </optgroup>
+            {% endfor %}
+          </select>
+          <button class="btn btn-primary sm">Активировать</button>
+        </form>
+      </td>
+      <td>
+        <form method="post" action="{{ url_for('admin.pending_delete') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <input type="hidden" name="code" value="{{ r.code }}">
+          <button class="btn btn-danger sm" title="Удалить код">✕</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<div class="empty">Нет кодов в ожидании</div>{% endif %}
+</div>
+
+<div class="sec-hdr">
+  <h2>Активные участники <span class="badge">{{ active|length }}</span></h2>
+</div>
+<div class="tbl card">
+  {% if active %}
+  <input class="filter" placeholder="Поиск по коду, месту, мероприятию…" data-filter="#active">
+  <table id="active">
+    <thead><tr><th>Код</th><th>Мероприятие</th><th>Место</th><th>IP</th><th>Активирован</th><th>Кем</th><th></th></tr></thead>
+    <tbody>
+    {% for r in active %}
+    <tr>
+      <td class="code-cell">{{ r.code }}</td>
+      <td>{{ r.title }}</td>
+      <td class="mono">{{ r.label }}</td>
+      <td class="mono">{{ r.ip }}</td>
+      <td class="ts">{{ r.activated_at|ts }}</td>
+      <td class="ts">{{ r.activated_by }}</td>
+      <td>
+        <form method="post" action="{{ url_for('admin.revoke') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <input type="hidden" name="code" value="{{ r.code }}">
+          <button class="btn btn-danger sm">Сбросить</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<div class="empty">Нет активных участников</div>{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+.env
+data/
+*.db
+*.db-wal
+*.db-shm
+config.json
+__pycache__/
+.pytest_cache/
+.venv/
+tests/
+.git/
+README.md

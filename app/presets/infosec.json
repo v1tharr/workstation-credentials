@@ -1,0 +1,48 @@
+{
+  "name": "Информационная безопасность: SSH-стенд",
+  "description": "Адрес стенда, пользователь и пароль для подключения по SSH",
+  "columns": [
+    {
+      "key": "host",
+      "label": "Хост",
+      "secret": false
+    },
+    {
+      "key": "user",
+      "label": "Пользователь",
+      "secret": false
+    },
+    {
+      "key": "password",
+      "label": "Пароль",
+      "secret": true
+    }
+  ],
+  "cards": [
+    {
+      "title": "Стенд",
+      "subtitle": "Подключение по SSH",
+      "icon": "🛡️",
+      "fields": [
+        {
+          "label": "Хост",
+          "value": "{host}"
+        },
+        {
+          "label": "Команда",
+          "value": "ssh {user}@{host}"
+        },
+        {
+          "label": "Пользователь",
+          "value": "{user}",
+          "accent": true
+        },
+        {
+          "label": "Пароль",
+          "value": "{password}",
+          "accent": true
+        }
+      ]
+    }
+  ]
+}

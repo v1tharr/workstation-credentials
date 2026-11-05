@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<div class="center">
+  <form class="card narrow" method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <h1>Панель организатора</h1>
+    <p class="sub">Только для организаторов мероприятий</p>
+    <label>Логин <input name="username" autofocus required autocomplete="username"></label>
+    <label>Пароль <input type="password" name="password" required autocomplete="current-password"></label>
+    {% if error %}<div class="flash err">{{ error }}</div>{% endif %}
+    <button class="btn btn-primary block" type="submit">Войти</button>
+  </form>
+</div>
+{% endblock %}

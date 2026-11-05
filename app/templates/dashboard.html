@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Рабочее место — {{ label }}{% endblock %}
+{% block body %}
+<header class="top">
+  <div class="top-in">
+    <div class="grow">
+      <div class="lbl">{{ exam }}</div>
+      <div class="login">{{ label }}</div>
+    </div>
+    {% if preview %}
+      <a class="btn btn-ghost" href="javascript:history.back()">← Назад</a>
+    {% else %}
+      <form method="post" action="{{ url_for('student.logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button class="btn btn-ghost" type="submit">Выйти</button>
+      </form>
+    {% endif %}
+  </div>
+</header>
+<main class="wrap">
+  {% if preview %}<div class="flash ok">Предпросмотр для администратора</div>{% endif %}
+  <h2>Ваши ресурсы для работы</h2>
+  <p class="sub">Используйте данные ниже для подключения. Кнопка справа копирует значение.</p>
+  {% include "_cards.html" %}
+</main>
+{% endblock %}

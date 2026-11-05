@@ -1,0 +1,28 @@
+{% extends "admin/base.html" %}
+{% block title %}Рабочее место{% endblock %}
+{% block content %}
+<div class="sec-hdr"><h2>{{ exam.title }}: {{ 'изменить' if slot else 'новое место' }}</h2></div>
+<form class="card pad narrow-form" method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  {% for c in columns %}
+  <label>{{ c.label }}
+    {% if c.secret %}
+      <input type="password" name="{{ c.key }}" autocomplete="new-password"
+             placeholder="{{ 'оставьте пустым, чтобы не менять' if slot else '' }}">
+    {% else %}
+      <input name="{{ c.key }}" value="{{ data[c.key] }}" {{ 'required' if loop.first }}>
+    {% endif %}
+  </label>
+  {% endfor %}
+  <div class="row">
+    <button class="btn btn-primary">Сохранить</button>
+    <a class="btn btn-ghost" href="{{ url_for('admin.exam_edit', exam_id=exam.id) }}">Отмена</a>
+  </div>
+</form>
+{% if slot %}
+<form method="post" action="{{ url_for('admin.slot_delete', exam_id=exam.id, slot_id=slot.id) }}" data-confirm="Удалить рабочее место?">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <button class="btn btn-danger sm">Удалить это место</button>
+</form>
+{% endif %}
+{% endblock %}
