@@ -36,18 +36,8 @@ docker compose exec web python manage.py create-admin     # или: ... manage.p
 - [Как проходит мероприятие](docs/usage.md): настройка, выдача доступов, сценарии (параллельные мероприятия, повторы, перенос шаблона).
 - [Эксплуатация](docs/operations.md): обновление, бэкап и восстановление, настройки `.env`, что делать при сбоях.
 - [Безопасность и ограничения](docs/security.md): что защищено и что нужно знать.
+- [Разработка](docs/development.md): карта проекта, тесты, правила изменения кода.
 
-## Разработка
+## Лицензия
 
-```bash
-pip install -r requirements-dev.txt
-pytest
-
-export $(python manage.py gen-keys | xargs) DB_PATH=/tmp/demo/creds.db
-python manage.py demo
-gunicorn --bind 127.0.0.1:8765 'app:create_app()'
-```
-
-Участник и админ должны быть в разных браузерах или в обычном окне и инкогнито: иначе у них общая сессия.
-
-Шрифты Inter и JetBrains Mono лежат в `app/static/fonts`, лицензия OFL.
+[MIT](LICENSE)

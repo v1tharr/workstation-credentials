@@ -2,7 +2,7 @@
 
     python manage.py gen-keys
     python manage.py create-admin [--username NAME] [--role owner|admin]
-    python manage.py import-json config.json --exam "Название" [--cards examples/old-config.cards.json]
+    python manage.py import-json config.json --exam "Название" [--cards examples/cards.example.json]
     python manage.py demo
 """
 import argparse

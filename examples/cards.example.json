@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Git-сервер",
+    "subtitle": "Репозиторий исходного кода",
+    "icon": "📦",
+    "fields": [
+      {"label": "Адрес", "value": "http://git.lab.example:3000", "link": true},
+      {"label": "Логин", "value": "{login}", "accent": true},
+      {"label": "Пароль", "value": "{password}", "accent": true}
+    ]
+  },
+  {
+    "title": "База данных",
+    "subtitle": "PostgreSQL",
+    "icon": "🗄️",
+    "fields": [
+      {"label": "Хост", "value": "db.lab.example:5432"},
+      {"label": "Имя базы", "value": "{login}"},
+      {"label": "Логин", "value": "{login}", "accent": true},
+      {"label": "Пароль", "value": "{password}", "accent": true}
+    ]
+  }
+]
