@@ -1,0 +1,127 @@
+diff -ruN '--exclude=__pycache__' '--exclude=data' '--exclude=.pytest_cache' a/app/static/admin-nav.js b/app/static/admin-nav.js
+--- a/app/static/admin-nav.js	2026-11-06 01:50:04.367640996 +0700
++++ b/app/static/admin-nav.js	1970-01-01 07:00:00.000000000 +0700
+@@ -1,38 +0,0 @@
+-// Подсветка выбранного пункта бокового меню: плавно переезжает на новый пункт при переходе.
+-// Страницы грузятся заново, поэтому прошлое положение помним в sessionStorage
+-// и на новой странице «доезжаем» от него до текущего пункта.
+-(() => {
+-  const nav = document.getElementById("side-nav");
+-  const hl = nav && nav.querySelector(".side-hl");
+-  if (!hl) return;
+-  const links = [...nav.querySelectorAll("a")];
+-  const current = nav.querySelector("a.on");
+-  const KEY = "adm-nav-pos";
+-  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+-
+-  const place = (el) => {
+-    hl.style.height = el.offsetHeight + "px";
+-    hl.style.transform = `translateY(${el.offsetTop}px)`;
+-  };
+-  const save = () => { try { sessionStorage.setItem(KEY, String(hl.offsetTop)); } catch (e) {} };
+-
+-  nav.dataset.hl = "1";
+-  if (!current) { hl.style.opacity = "0"; return; }
+-
+-  let from = null;
+-  try { from = sessionStorage.getItem(KEY); } catch (e) {}
+-  if (from !== null && !calm) {
+-    hl.style.transition = "none";
+-    hl.style.height = current.offsetHeight + "px";
+-    hl.style.transform = `translateY(${Number(from)}px)`;
+-    hl.getBoundingClientRect();                      // зафиксировать стартовое положение
+-    hl.style.transition = "";
+-  }
+-  place(current);
+-  save();
+-
+-  // подсветка отмечает только выбранный раздел; наведение её не двигает (его показывает CSS)
+-  links.forEach((a) => {
+-    a.addEventListener("click", () => { place(a); try { sessionStorage.setItem(KEY, String(a.offsetTop)); } catch (e) {} });
+-  });
+-})();
+diff -ruN '--exclude=__pycache__' '--exclude=data' '--exclude=.pytest_cache' a/app/static/admin.css b/app/static/admin.css
+--- a/app/static/admin.css	2026-11-06 01:50:04.367275226 +0700
++++ b/app/static/admin.css	2026-11-06 01:50:04.525883547 +0700
+@@ -21,19 +21,13 @@
+ .side-brand{display:flex;gap:10px;align-items:center;padding:0 20px 20px;border-bottom:1px solid var(--line);font-weight:600;font-size:.85rem;line-height:1.25}
+ .logo{color:var(--accent);font-size:1.3rem;letter-spacing:-.15em}
+ html[data-theme=dark] .logo,html:not([data-theme]) .logo{color:var(--ink)}
+-.side-nav{position:relative;display:flex;flex-direction:column;padding:14px 10px;gap:2px;flex:1}
+-.side-nav a{position:relative;z-index:1;display:block;padding:9px 14px;color:var(--muted);text-decoration:none;font-weight:500;font-size:.92rem;border-radius:8px;transition:color .15s}
++.side-nav{display:flex;flex-direction:column;padding:14px 10px;gap:2px;flex:1}
++.side-nav a{position:relative;display:block;padding:9px 14px 9px 20px;color:var(--muted);text-decoration:none;font-weight:500;font-size:.92rem;border-radius:7px;transition:color .15s,background-color .15s}
+ .side-nav a:hover{color:var(--text)}
+-/* наведение: лёгкий фон без рамки и полоски, чтобы не путать с выбранным пунктом */
+-.side-nav a:not(.on):hover{background:rgba(127,145,170,.14)}
+-.side-nav a.on{color:var(--ink)}
+-/* бегущая подсветка пункта (admin-nav.js); без скрипта подсвечивается сам активный пункт */
+-.side-hl{position:absolute;z-index:0;left:10px;right:10px;top:0;height:0;border-radius:8px;background:var(--tint);
+-  border:1px solid var(--tint-line);box-shadow:0 1px 2px rgba(0,0,0,.08);pointer-events:none;
+-  transition:transform .28s cubic-bezier(.3,.7,.2,1),height .28s cubic-bezier(.3,.7,.2,1)}
+-.side-hl::before{content:"";position:absolute;left:6px;top:22%;bottom:22%;width:3px;border-radius:3px;background:var(--accent)}
+-.side-nav:not([data-hl]) a.on{background:var(--tint)}
+-@media (prefers-reduced-motion:reduce){.side-hl{transition:none}}
++/* выбранный раздел: еле заметный фон и короткая полоска слева; наведение меняет только цвет текста */
++.side-nav a.on{color:var(--text);background:var(--tint)}
++.side-nav a.on::before{content:"";position:absolute;left:7px;top:24%;bottom:24%;width:3px;border-radius:3px;background:var(--accent)}
++html[data-theme=dark] .side-nav a.on::before{background:var(--ink)}
+ .side-user{padding:16px 20px 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+ .side-user a{color:var(--text);text-decoration:none;font-weight:600;font-size:.92rem}
+ .side-user .lbl{display:block;margin-bottom:2px}
+@@ -104,4 +98,14 @@
+ 
+ .adm a.row-link{color:var(--text);font-weight:600;text-decoration:none}
+ .adm a.row-link:hover{color:var(--ink)}
+-@media (max-width:820px){.side-hl{display:none}.side-nav a.on{background:var(--tint)}}
++
++/* «Как это работает»: компактная кнопка вместо полосы во всю ширину */
++.help{margin-bottom:16px}
++.help summary{display:inline-flex;align-items:center;gap:8px;list-style:none;cursor:pointer;padding:6px 14px 6px 10px;
++  border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.85rem;font-weight:500;user-select:none}
++.help summary::-webkit-details-marker{display:none}
++.help summary::before{content:"?";display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;
++  border-radius:50%;background:var(--tint);color:var(--ink);font-size:.72rem;font-weight:700}
++.help summary:hover,.help[open] summary{color:var(--text);border-color:var(--tint-line)}
++.help-body{margin-top:10px;padding:14px 20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:.9rem}
++.help-body ol{margin:0;padding-left:20px;line-height:1.7}
+diff -ruN '--exclude=__pycache__' '--exclude=data' '--exclude=.pytest_cache' a/app/templates/admin/base.html b/app/templates/admin/base.html
+--- a/app/templates/admin/base.html	2026-11-06 01:50:04.306635806 +0700
++++ b/app/templates/admin/base.html	2026-11-06 01:50:04.525429157 +0700
+@@ -1,14 +1,13 @@
+ {% extends "base.html" %}
+ {% block theme %}dark adm{% endblock %}
+ {% block head %}<script src="{{ url_for('static', filename='admin-theme.js') }}"></script>
+-<script src="{{ url_for('static', filename='admin-nav.js') }}" defer></script>
+ <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">{% endblock %}
+ {% block body %}
+ <div class="shell{{ ' bare' if not me }}">
+   {% if me %}
+   <aside class="side">
+     <div class="side-brand"><span class="logo">▮▮</span><strong>workstation<br>credentials</strong></div>
+-    <nav class="side-nav" id="side-nav"><span class="side-hl" aria-hidden="true"></span>
++    <nav class="side-nav" id="side-nav">
+       <a href="{{ url_for('admin.panel') }}" class="{{ 'on' if request.endpoint == 'admin.panel' }}">Коды</a>
+       <a href="{{ url_for('admin.exams') }}" class="{{ 'on' if request.endpoint in ('admin.exams', 'admin.exam_edit') }}">Мероприятия</a>
+       {% if me.role == 'owner' %}<a href="{{ url_for('admin.admins') }}" class="{{ 'on' if request.endpoint == 'admin.admins' }}">Админы</a>{% endif %}
+diff -ruN '--exclude=__pycache__' '--exclude=data' '--exclude=.pytest_cache' a/app/templates/admin/panel.html b/app/templates/admin/panel.html
+--- a/app/templates/admin/panel.html	2026-11-06 01:50:04.362104254 +0700
++++ b/app/templates/admin/panel.html	2026-11-06 01:50:10.390256058 +0700
+@@ -1,14 +1,14 @@
+ {% extends "admin/base.html" %}
+ {% block title %}Коды{% endblock %}
+ {% block content %}
+-<details class="help card" style="padding:10px 14px">
++<details class="help">
+   <summary>Как это работает</summary>
+-  <ol>
++  <div class="help-body"><ol>
+     <li>Участник открывает сайт и видит 6-значный код.</li>
+     <li>Он называет код вам — найдите его в списке «Ожидают активации».</li>
+     <li>Выберите рабочее место и нажмите «Активировать» — у участника откроются его данные.</li>
+     <li>После мероприятия закройте его в разделе «Мероприятия» — доступы сразу отзовутся.</li>
+-  </ol>
++  </ol></div>
+ </details>
+ <div class="sec-hdr">
+   <h2>Ожидают активации <span class="badge">{{ pending|length }}</span></h2>

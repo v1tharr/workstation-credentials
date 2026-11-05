@@ -1,14 +1,14 @@
 {% extends "admin/base.html" %}
 {% block title %}Коды{% endblock %}
 {% block content %}
-<details class="help card" style="padding:10px 14px">
+<details class="help">
   <summary>Как это работает</summary>
-  <ol>
+  <div class="help-body"><ol>
     <li>Участник открывает сайт и видит 6-значный код.</li>
     <li>Он называет код вам — найдите его в списке «Ожидают активации».</li>
     <li>Выберите рабочее место и нажмите «Активировать» — у участника откроются его данные.</li>
     <li>После мероприятия закройте его в разделе «Мероприятия» — доступы сразу отзовутся.</li>
-  </ol>
+  </ol></div>
 </details>
 <div class="sec-hdr">
   <h2>Ожидают активации <span class="badge">{{ pending|length }}</span></h2>

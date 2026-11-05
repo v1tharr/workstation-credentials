@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% block theme %}dark adm{% endblock %}
 {% block head %}<script src="{{ url_for('static', filename='admin-theme.js') }}"></script>
-<script src="{{ url_for('static', filename='admin-nav.js') }}" defer></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">{% endblock %}
 {% block body %}
 <div class="shell{{ ' bare' if not me }}">
   {% if me %}
   <aside class="side">
     <div class="side-brand"><span class="logo">▮▮</span><strong>workstation<br>credentials</strong></div>
-    <nav class="side-nav" id="side-nav"><span class="side-hl" aria-hidden="true"></span>
+    <nav class="side-nav" id="side-nav">
       <a href="{{ url_for('admin.panel') }}" class="{{ 'on' if request.endpoint == 'admin.panel' }}">Коды</a>
       <a href="{{ url_for('admin.exams') }}" class="{{ 'on' if request.endpoint in ('admin.exams', 'admin.exam_edit') }}">Мероприятия</a>
       {% if me.role == 'owner' %}<a href="{{ url_for('admin.admins') }}" class="{{ 'on' if request.endpoint == 'admin.admins' }}">Админы</a>{% endif %}
