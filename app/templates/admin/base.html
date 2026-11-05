@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% block theme %}dark adm{% endblock %}
 {% block head %}<script src="{{ url_for('static', filename='admin-theme.js') }}"></script>
+<script src="{{ url_for('static', filename='admin-nav.js') }}" defer></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">{% endblock %}
 {% block body %}
 <div class="shell{{ ' bare' if not me }}">
   {% if me %}
   <aside class="side">
     <div class="side-brand"><span class="logo">▮▮</span><strong>workstation<br>credentials</strong></div>
-    <nav class="side-nav">
+    <nav class="side-nav" id="side-nav"><span class="side-hl" aria-hidden="true"></span>
       <a href="{{ url_for('admin.panel') }}" class="{{ 'on' if request.endpoint == 'admin.panel' }}">Коды</a>
       <a href="{{ url_for('admin.exams') }}" class="{{ 'on' if request.endpoint in ('admin.exams', 'admin.exam_edit') }}">Мероприятия</a>
       {% if me.role == 'owner' %}<a href="{{ url_for('admin.admins') }}" class="{{ 'on' if request.endpoint == 'admin.admins' }}">Админы</a>{% endif %}
@@ -18,9 +19,9 @@
       <div class="row">
         <form method="post" action="{{ url_for('admin.logout') }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-          <button class="btn btn-ghost sm" type="submit">Выйти</button>
+          <button class="btn btn-ghost" type="submit">Выйти</button>
         </form>
-        <button class="btn btn-ghost sm" type="button" data-theme-toggle title="Светлая / тёмная тема" aria-label="Сменить тему">◐</button>
+        <button class="btn btn-ghost theme-btn" type="button" data-theme-toggle title="Светлая / тёмная тема" aria-label="Сменить тему"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 010 17z" fill="currentColor"/></svg></button>
       </div>
     </div>
   </aside>

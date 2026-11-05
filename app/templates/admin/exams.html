@@ -9,7 +9,7 @@
     <tbody>
     {% for e in exams %}
     <tr>
-      <td><a href="{{ url_for('admin.exam_edit', exam_id=e.id) }}">{{ e.title }}</a></td>
+      <td><a class="row-link" href="{{ url_for('admin.exam_edit', exam_id=e.id) }}">{{ e.title }}</a></td>
       <td><span class="tag {{ e.status }}">{{ 'открыто' if e.status == 'open' else 'закрыто' }}</span></td>
       <td>{{ e.n_slots }}</td>
       <td>{{ e.n_active }}</td>
@@ -25,7 +25,7 @@
   <h3>Новое мероприятие</h3>
   <form class="inline" method="post" action="{{ url_for('admin.exam_new') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <input name="title" placeholder="Название, например «ИБ, группа 21-1»" required size="34">
+    <input name="title" placeholder="Название, например «Чемпионат, сессия 2»" required size="34">
     <select name="source" data-combo>
       <option value="">пустой, с нуля</option>
       {% if presets %}<optgroup label="Готовые шаблоны">
