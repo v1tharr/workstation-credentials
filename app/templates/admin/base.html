@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block theme %}dark adm{% endblock %}
-{% block head %}<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">{% endblock %}
+{% block head %}<script src="{{ url_for('static', filename='admin-theme.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">{% endblock %}
 {% block body %}
 <div class="shell{{ ' bare' if not me }}">
   {% if me %}
@@ -14,10 +15,13 @@
     </nav>
     <div class="side-user">
       <a href="{{ url_for('admin.account') }}"><span class="lbl">{{ 'владелец' if me.role == 'owner' else 'админ' }}</span>{{ me.username }}</a>
-      <form method="post" action="{{ url_for('admin.logout') }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <button class="btn btn-ghost sm" type="submit">Выйти</button>
-      </form>
+      <div class="row">
+        <form method="post" action="{{ url_for('admin.logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="btn btn-ghost sm" type="submit">Выйти</button>
+        </form>
+        <button class="btn btn-ghost sm" type="button" data-theme-toggle title="Светлая / тёмная тема" aria-label="Сменить тему">◐</button>
+      </div>
     </div>
   </aside>
   {% endif %}
