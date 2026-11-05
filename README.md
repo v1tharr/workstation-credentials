@@ -1,5 +1,7 @@
 # workstation-credentials
 
+![tests](https://github.com/v1tharr/workstation-credentials/actions/workflows/tests.yml/badge.svg)
+
 Веб-сервис для выдачи логинов и паролей рабочих мест участникам мероприятий: демо-экзаменов,
 чемпионатов по программированию, сетевому и системному администрированию, лабораторных.
 
@@ -37,6 +39,10 @@ docker compose exec web python manage.py create-admin     # или: ... manage.p
 - [Эксплуатация](docs/operations.md): обновление, бэкап и восстановление, настройки `.env`, что делать при сбоях.
 - [Безопасность и ограничения](docs/security.md): что защищено и что нужно знать.
 - [Разработка](docs/development.md): карта проекта, тесты, правила изменения кода.
+
+## Версии
+
+Релизы и изменения: [Releases](https://github.com/v1tharr/workstation-credentials/releases).
 
 ## Лицензия
 

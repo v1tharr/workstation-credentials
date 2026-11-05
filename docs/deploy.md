@@ -9,8 +9,14 @@
 ```bash
 git clone https://github.com/v1tharr/workstation-credentials.git
 cd workstation-credentials
+git checkout v0.1.0        # конкретный релиз; без этой строки будет последняя версия из main
 ./setup.sh                    # создаёт .env с ключами; если .env уже есть, не трогает его
 ```
+
+Если `git` на сервере нет, скачайте архив нужного релиза со страницы
+[Releases](https://github.com/v1tharr/workstation-credentials/releases) (Source code, zip или tar.gz),
+распакуйте его и перейдите в папку. Дальше всё так же. В архиве скрипт может оказаться без права запуска,
+тогда выполните `bash setup.sh` вместо `./setup.sh`.
 
 Сразу сохраните копию `ENCRYPTION_KEY` из `.env` отдельно от сервера (менеджер паролей, сейф).
 Без неё не восстановить данные после потери сервера.
