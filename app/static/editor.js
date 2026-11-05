@@ -240,7 +240,7 @@
       return h("section", { class: "ed-card" },
         h("div", { class: "ed-row" },
           iconPicker(c), bind("title", "Название карточки", "ed-grow"),
-          bind("subtitle", "Подзаголовок", "ed-grow"), bind("badge", "Метка (необязательно)", "ed-badge"),
+          bind("subtitle", "Подзаголовок", "ed-grow"),
           btn("↑", "Карточку выше", () => { if (move(cards, i, -1)) { renderCards(); sync(); } }),
           btn("↓", "Карточку ниже", () => { if (move(cards, i, 1)) { renderCards(); sync(); } }),
           btn("✕", "Удалить карточку", () => { cards.splice(i, 1); renderCards(); sync(); }, "btn btn-danger sm")),

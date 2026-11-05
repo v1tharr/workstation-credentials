@@ -5,7 +5,7 @@ services:
     container_name: exam_credentials
     restart: unless-stopped
     ports:
-      - "8765:5000"
+      - "${LISTEN_ADDR:-0.0.0.0}:${HTTP_PORT:-8765}:5000"   # адрес и порт на хосте, см. .env
     env_file: .env          # SECRET_KEY, ENCRYPTION_KEY и т.п.; в git не попадает
     volumes:
       - creds-data:/app/data
